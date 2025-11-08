@@ -9,7 +9,7 @@ Link demo --- [demo](https://quanvu1702.github.io/BTL_tkw/)
 BTL thiết kế web của Nhóm 8 lớp CNTTVA1-K65.
 Link demo: 
 
-📚 Quản lý Hiệu Sách - Dành cho Người Bán
+📚 Quản lý Hiệu Sách 
 
 Một ứng dụng web đơn giản giúp người bán sách quản lý danh sách sách, tồn kho, đơn hàng và báo cáo doanh thu. Dữ liệu được lưu trữ cục bộ bằng `localStorage`.
 
