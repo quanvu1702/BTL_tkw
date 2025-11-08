@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quản lý Hiệu Sách - Dành cho Người Bán</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+}
+.navbar {
+  overflow: hidden;
+  background-color: #333;
+}
+.navbar a {
+  float: left;
+  color: white;
+  padding: 14px 20px;
+  text-decoration: none;
+  text-align: center;
+}
+.navbar a:hover {
+  background-color: #04AA6D;
+}
+.container {
+  margin: 20px;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+}
+input, button {
+  padding: 8px;
+  margin: 5px 0;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+th, td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+th {
+  background-color: #04AA6D;
+  color: white;
+}
+button {
+  background-color: #04AA6D;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+button:hover {
+  background-color: #45a049;
+}
+hr {
+  margin: 25px 0;
+}
+</style>
+</head>
+<body>
+
+<div class="navbar">
+  <a href="#books">📚 Sách</a>
+  <a href="#inventory">📦 Tồn kho</a>
+  <a href="#orders">🧾 Đơn hàng</a>
+  <a href="#report">📈 Báo cáo</a>
+</div>
+
+<div class="container">
+  <h2>Quản lý hiệu sách (Dành cho người bán)</h2>
+
+  <!-- 1️⃣ QUẢN LÝ DANH SÁCH SÁCH -->
+  <h3 id="books">📚 Quản lý danh sách sách</h3>
+  <form id="bookForm" onsubmit="saveBook(event)">
+    <input type="hidden" id="editIndex">
+    <label>Tên sách:</label><br>
+    <input type="text" id="title" required><br>
+    <label>Tác giả:</label><br>
+    <input type="text" id="author" required><br>
+    <label>Giá (₫):</label><br>
+    <input type="number" id="price" min="0" required><br>
+    <label>Số lượng:</label><br>
+    <input type="number" id="quantity" min="0" required><br>
+    <button type="submit">Lưu</button>
+  </form>
+
+  <table id="bookTable">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Tên sách</th>
+        <th>Tác giả</th>
+        <th>Giá</th>
+        <th>Số lượng</th>
+        <th>Thao tác</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <hr>
+
+  <!-- 2️⃣ QUẢN LÝ TỒN KHO -->
+  <h3 id="inventory">📦 Quản lý tồn kho</h3>
+  <table id="inventoryTable">
+    <thead>
+      <tr>
+        <th>Tên sách</th>
+        <th>Tồn kho</th>
+        <th>Trạng thái</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <hr>
+
+  <!-- 3️⃣ QUẢN LÝ ĐƠN HÀNG -->
+  <h3 id="orders">🧾 Quản lý đơn hàng</h3>
+  <label>Chọn sách:</label><br>
+  <select id="orderBook"></select><br>
+  <label>Số lượng bán:</label><br>
+  <input type="number" id="orderQty" min="1"><br>
+  <button onclick="createOrder()">Tạo đơn hàng</button>
+
+  <table id="orderTable">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Tên sách</th>
+        <th>Số lượng</th>
+        <th>Thành tiền</th>
+        <th>Ngày bán</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <hr>
+
+  <!-- 4️⃣ BÁO CÁO DOANH THU -->
+  <h3 id="report">📈 Báo cáo doanh thu</h3>
+  <p>Tổng đơn hàng: <span id="totalOrders">0</span></p>
+  <p>Tổng doanh thu: <span id="totalRevenue">0</span> ₫</p>
+</div>
+
+<script>
+let books = JSON.parse(localStorage.getItem("books") || "[]");
+let orders = JSON.parse(localStorage.getItem("orders") || "[]");
+
+// ================== QUẢN LÝ SÁCH ==================
+function saveBook(event) {
+  event.preventDefault();
+  const title = titleInput.value;
+  const author = authorInput.value;
+  const price = Number(priceInput.value);
+  const quantity = Number(quantityInput.value);
+  const index = editIndex.value;
+
+  if (index) {
+    books[index] = { title, author, price, quantity };
+  } else {
+    books.push({ title, author, price, quantity });
+  }
+
+  localStorage.setItem("books", JSON.stringify(books));
+  document.getElementById("bookForm").reset();
+  editIndex.value = "";
+  renderBooks();
+  renderInventory();
+  renderSelectBooks();
+}
+
+function renderBooks() {
+  const tbody = document.querySelector("#bookTable tbody");
+  tbody.innerHTML = "";
+  books.forEach((b, i) => {
+    const row = `<tr>
+      <td>${i + 1}</td>
+      <td>${b.title}</td>
+      <td>${b.author}</td>
+      <td>${b.price.toLocaleString("vi-VN")}</td>
+      <td>${b.quantity}</td>
+      <td>
+        <button onclick="editBook(${i})">Sửa</button>
+        <button onclick="deleteBook(${i})">Xóa</button>
+      </td>
+    </tr>`;
+    tbody.innerHTML += row;
+  });
+}
+function editBook(i) {
+  const b = books[i];
+  titleInput.value = b.title;
+  authorInput.value = b.author;
+  priceInput.value = b.price;
+  quantityInput.value = b.quantity;
+  editIndex.value = i;
+}
+function deleteBook(i) {
+  if (confirm("Xóa sách này?")) {
+    books.splice(i, 1);
+    localStorage.setItem("books", JSON.stringify(books));
+    renderBooks();
+    renderInventory();
+    renderSelectBooks();
+  }
+}
+
+// ================== TỒN KHO ==================
+function renderInventory() {
+  const tbody = document.querySelector("#inventoryTable tbody");
+  tbody.innerHTML = "";
+  books.forEach(b => {
+    const status = b.quantity < 5 ? "⚠ Sắp hết hàng" : "✅ Còn hàng";
+    const row = `<tr>
+      <td>${b.title}</td>
+      <td>${b.quantity}</td>
+      <td>${status}</td>
+    </tr>`;
+    tbody.innerHTML += row;
+  });
+}
+
+// ================== ĐƠN HÀNG ==================
+function renderSelectBooks() {
+  const select = document.getElementById("orderBook");
+  select.innerHTML = "";
+  books.forEach((b, i) => {
+    select.innerHTML += `<option value="${i}">${b.title}</option>`;
+  });
+}
+
+function createOrder() {
+  const i = Number(document.getElementById("orderBook").value);
+  const qty = Number(document.getElementById("orderQty").value);
+  if (qty <= 0 || qty > books[i].quantity) {
+    alert("Số lượng không hợp lệ!");
+    return;
+  }
+  books[i].quantity -= qty;
+  const total = qty * books[i].price;
+  const date = new Date().toLocaleDateString("vi-VN");
+  orders.push({ title: books[i].title, qty, total, date });
+
+  localStorage.setItem("books", JSON.stringify(books));
+  localStorage.setItem("orders", JSON.stringify(orders));
+
+  renderBooks();
+  renderInventory();
+  renderSelectBooks();
+  renderOrders();
+  renderReport();
+}
+
+function renderOrders() {
+  const tbody = document.querySelector("#orderTable tbody");
+  tbody.innerHTML = "";
+  orders.forEach((o, i) => {
+    const row = `<tr>
+      <td>${i + 1}</td>
+      <td>${o.title}</td>
+      <td>${o.qty}</td>
+      <td>${o.total.toLocaleString("vi-VN")}</td>
+      <td>${o.date}</td>
+    </tr>`;
+    tbody.innerHTML += row;
+  });
+}
+
+// ================== BÁO CÁO ==================
+function renderReport() {
+  document.getElementById("totalOrders").textContent = orders.length;
+  const revenue = orders.reduce((sum, o) => sum + o.total, 0);
+  document.getElementById("totalRevenue").textContent = revenue.toLocaleString("vi-VN");
+}
+
+// ================== KHỞI TẠO ==================
+const titleInput = document.getElementById("title");
+const authorInput = document.getElementById("author");
+const priceInput = document.getElementById("price");
+const quantityInput = document.getElementById("quantity");
+const editIndex = document.getElementById("editIndex");
+
+renderBooks();
+renderInventory();
+renderSelectBooks();
+renderOrders();
+renderReport();
+</script>
+
+</body>
+</html>
