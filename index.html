@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quản lý Hiệu Sách - Dành cho Người Bán</title>
+<title>Quản lý Hiệu Sách</title>
 <style>
 body {
   font-family: Arial, sans-serif;
@@ -150,9 +150,10 @@ hr {
 </div>
 
 <script>
-let books = JSON.parse(localStorage.getItem("books") || "[]");
-let orders = JSON.parse(localStorage.getItem("orders") || "[]");
-
+window.onload = () => {
+  localStorage.removeItem("books");
+  localStorage.removeItem("orders");
+};
 // ================== QUẢN LÝ SÁCH ==================
 function saveBook(event) {
   event.preventDefault();
@@ -268,11 +269,20 @@ function renderOrders() {
       <td>${o.qty}</td>
       <td>${o.total.toLocaleString("vi-VN")}</td>
       <td>${o.date}</td>
+      <td><button onclick="deleteOrder(${i})">Xóa</button></td>
     </tr>`;
     tbody.innerHTML += row;
   });
 }
 
+function deleteOrder(i) {
+  if (confirm("Xóa đơn hàng này?")) {
+    orders.splice(i, 1);
+    localStorage.setItem("orders", JSON.stringify(orders));
+    renderOrders();
+    renderReport();
+  }
+}
 // ================== BÁO CÁO ==================
 function renderReport() {
   document.getElementById("totalOrders").textContent = orders.length;
@@ -296,3 +306,4 @@ renderReport();
 
 </body>
 </html>
+
