@@ -126,7 +126,7 @@ hr {
   <select id="orderBook"></select><br>
   <label>Số lượng bán:</label><br>
   <input type="number" id="orderQty" min="1"><br>
-  <button onclick="createOrder()">Tạo đơn hàng</button>
+  <button type="button" onclick="createOrder()">Tạo đơn hàng</button>
 
   <table id="orderTable">
     <thead>
@@ -136,6 +136,7 @@ hr {
         <th>Số lượng</th>
         <th>Thành tiền</th>
         <th>Ngày bán</th>
+        <th>Thao tác</th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -147,10 +148,15 @@ hr {
   <h3 id="report">📈 Báo cáo doanh thu</h3>
   <p>Tổng đơn hàng: <span id="totalOrders">0</span></p>
   <p>Tổng doanh thu: <span id="totalRevenue">0</span> ₫</p>
+
+  <hr>
+  <!-- Nút reset dữ liệu nếu bạn muốn (tùy chọn) -->
+  <button type="button" onclick="resetData()">🗑️ Xóa toàn bộ dữ liệu</button>
 </div>
 
 <script>
-// Xóa dữ liệu ngay khi tải script (chỉ chạy 1 lần khi load lại trang)
+// === YÊU CẦU BẠN: mỗi lần vào link thì mất dữ liệu ===
+// Xóa dữ liệu ngay khi load trang
 localStorage.removeItem("books");
 localStorage.removeItem("orders");
 
@@ -158,60 +164,56 @@ localStorage.removeItem("orders");
 let books = [];
 let orders = [];
 
+// Tham chiếu DOM (khai báo sớm để hàm sử dụng an toàn)
+const titleInput = document.getElementById("title");
+const authorInput = document.getElementById("author");
+const priceInput = document.getElementById("price");
+const quantityInput = document.getElementById("quantity");
+const editIndex = document.getElementById("editIndex");
+
 // ================== QUẢN LÝ SÁCH ==================
 function saveBook(event) {
   event.preventDefault();
-  const title = titleInput.value;
-  const author = authorInput.value;
+  const title = titleInput.value.trim();
+  const author = authorInput.value.trim();
   const price = Number(priceInput.value);
   const quantity = Number(quantityInput.value);
   const index = editIndex.value;
 
-  if (index) {
+  if (!title || !author || isNaN(price) || isNaN(quantity)) {
+    alert("Vui lòng điền đầy đủ thông tin hợp lệ.");
+    return;
+  }
+
+  if (index !== "") {
+    // sửa
     books[index] = { title, author, price, quantity };
   } else {
+    // thêm
     books.push({ title, author, price, quantity });
   }
 
+  // Lưu vào localStorage (mặc dù sau khi load lại sẽ bị xóa như bạn muốn)
   localStorage.setItem("books", JSON.stringify(books));
+
+  // reset form và hiển thị lại
   document.getElementById("bookForm").reset();
   editIndex.value = "";
   renderBooks();
   renderInventory();
   renderSelectBooks();
 }
-// ================== QUẢN LÝ SÁCH ==================
-function saveBook(event) {
-  event.preventDefault();
-  const title = titleInput.value;
-  const author = authorInput.value;
-  const price = Number(priceInput.value);
-  const quantity = Number(quantityInput.value);
-  const index = editIndex.value;
 
-  if (index) {
-    books[index] = { title, author, price, quantity };
-  } else {
-    books.push({ title, author, price, quantity });
-  }
-
-  localStorage.setItem("books", JSON.stringify(books));
-  document.getElementById("bookForm").reset();
-  editIndex.value = "";
-  renderBooks();
-  renderInventory();
-  renderSelectBooks();
-}
-
+// ================== HIỂN THỊ SÁCH ==================
 function renderBooks() {
   const tbody = document.querySelector("#bookTable tbody");
   tbody.innerHTML = "";
   books.forEach((b, i) => {
     const row = `<tr>
       <td>${i + 1}</td>
-      <td>${b.title}</td>
-      <td>${b.author}</td>
-      <td>${b.price.toLocaleString("vi-VN")}</td>
+      <td>${escapeHtml(b.title)}</td>
+      <td>${escapeHtml(b.author)}</td>
+      <td>${Number(b.price).toLocaleString("vi-VN")}</td>
       <td>${b.quantity}</td>
       <td>
         <button onclick="editBook(${i})">Sửa</button>
@@ -246,7 +248,7 @@ function renderInventory() {
   books.forEach(b => {
     const status = b.quantity < 5 ? "⚠ Sắp hết hàng" : "✅ Còn hàng";
     const row = `<tr>
-      <td>${b.title}</td>
+      <td>${escapeHtml(b.title)}</td>
       <td>${b.quantity}</td>
       <td>${status}</td>
     </tr>`;
@@ -259,15 +261,24 @@ function renderSelectBooks() {
   const select = document.getElementById("orderBook");
   select.innerHTML = "";
   books.forEach((b, i) => {
-    select.innerHTML += `<option value="${i}">${b.title}</option>`;
+    select.innerHTML += `<option value="${i}">${escapeHtml(b.title)}</option>`;
   });
 }
 
 function createOrder() {
-  const i = Number(document.getElementById("orderBook").value);
+  const sel = document.getElementById("orderBook");
+  if (!sel || sel.options.length === 0) {
+    alert("Chưa có sách để tạo đơn. Vui lòng thêm sách trước.");
+    return;
+  }
+  const i = Number(sel.value);
   const qty = Number(document.getElementById("orderQty").value);
-  if (qty <= 0 || qty > books[i].quantity) {
+  if (!Number.isInteger(qty) || qty <= 0) {
     alert("Số lượng không hợp lệ!");
+    return;
+  }
+  if (qty > books[i].quantity) {
+    alert("Số lượng bán vượt quá tồn kho!");
     return;
   }
   books[i].quantity -= qty;
@@ -291,9 +302,9 @@ function renderOrders() {
   orders.forEach((o, i) => {
     const row = `<tr>
       <td>${i + 1}</td>
-      <td>${o.title}</td>
+      <td>${escapeHtml(o.title)}</td>
       <td>${o.qty}</td>
-      <td>${o.total.toLocaleString("vi-VN")}</td>
+      <td>${Number(o.total).toLocaleString("vi-VN")}</td>
       <td>${o.date}</td>
       <td><button onclick="deleteOrder(${i})">Xóa</button></td>
     </tr>`;
@@ -309,28 +320,48 @@ function deleteOrder(i) {
     renderReport();
   }
 }
+
 // ================== BÁO CÁO ==================
 function renderReport() {
   document.getElementById("totalOrders").textContent = orders.length;
-  const revenue = orders.reduce((sum, o) => sum + o.total, 0);
-  document.getElementById("totalRevenue").textContent = revenue.toLocaleString("vi-VN");
+  const revenue = orders.reduce((sum, o) => sum + (o.total || 0), 0);
+  document.getElementById("totalRevenue").textContent = Number(revenue).toLocaleString("vi-VN");
 }
 
-// ================== KHỞI TẠO ==================
-const titleInput = document.getElementById("title");
-const authorInput = document.getElementById("author");
-const priceInput = document.getElementById("price");
-const quantityInput = document.getElementById("quantity");
-const editIndex = document.getElementById("editIndex");
+// ================== HÀM TIỆN ÍCH ==================
+function resetData() {
+  if (confirm("Bạn có chắc muốn xóa toàn bộ dữ liệu không?")) {
+    localStorage.removeItem("books");
+    localStorage.removeItem("orders");
+    books = [];
+    orders = [];
+    renderBooks();
+    renderInventory();
+    renderSelectBooks();
+    renderOrders();
+    renderReport();
+    alert("Dữ liệu đã được xóa. Bạn có thể nhập mới từ đầu.");
+  }
+}
 
+// simple escape to avoid HTML injection when rendering
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+// ================== KHỞI TẠO HIỂN THỊ BAN ĐẦU ==================
+// Sau khi script đã khởi tạo biến, gọi render để vẽ giao diện ban đầu (rỗng)
 renderBooks();
 renderInventory();
 renderSelectBooks();
 renderOrders();
 renderReport();
+
 </script>
 
 </body>
 </html>
-
-
