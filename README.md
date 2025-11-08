@@ -1,3 +1,14 @@
+Link demo: 
+
+Bài tập lớn của nhóm 8 với đề tài: Quản lý bán sách tại hiệu sách
+HƯỚNG DẪN SỬ DỤNG GIT --- Link Github
+
+HƯỚNG DẪN ĐẶT TÊN COMMIT --- Link hướng dẫn
+
+LINK FIGMA --- Link Figma
+
+
+
 # BTL_tkw
 BTL thiết kế web của Nhóm 8 lớp CNTTVA1-K65.
 Link demo: 
