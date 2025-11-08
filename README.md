@@ -1,9 +1,10 @@
 Link demo: 
 
 Bài tập lớn của nhóm 8 với đề tài: Quản lý bán sách tại hiệu sách
-HƯỚNG DẪN SỬ DỤNG GIT --- Link Github
 
-HƯỚNG DẪN ĐẶT TÊN COMMIT --- Link hướng dẫn
+HƯỚNG DẪN SỬ DỤNG GIT --- https://gist.github.com/antruongnguyen/6bb4ebbcb8ad3608eeddff97ca615c47
+
+HƯỚNG DẪN ĐẶT TÊN COMMIT --- https://viblo.asia/p/dat-ten-commit-message-sao-cho-tinh-nghia-anh-em-chac-chan-ben-lau-
 
 LINK FIGMA --- Link Figma
 
