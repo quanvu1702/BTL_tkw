@@ -57,7 +57,7 @@ button {
 button:hover {
   background-color: #45a049;
 }
-hr {
+r {
   margin: 25px 0;
 }
 </style>
@@ -187,8 +187,8 @@ function renderBooks() {
       <td>${b.price.toLocaleString("vi-VN")}</td>
       <td>${b.quantity}</td>
       <td>
-        <button onclick="editBook(${i})">Sửa</button>
-        <button onclick="deleteBook(${i})">Xóa</button>
+        <button onclick=\"editBook(${i})\">Sửa</button>
+        <button onclick=\"deleteBook(${i})\">Xóa</button>
       </td>
     </tr>`;
     tbody.innerHTML += row;
@@ -232,7 +232,7 @@ function renderSelectBooks() {
   const select = document.getElementById("orderBook");
   select.innerHTML = "";
   books.forEach((b, i) => {
-    select.innerHTML += `<option value="${i}">${b.title}</option>`;
+    select.innerHTML += `<option value=\"${i}\">${b.title}</option>`;
   });
 }
 
