@@ -2,7 +2,7 @@ Bài tập lớn của nhóm 8 với đề tài: Quản lý bán sách tại hi�
 
 HƯỚNG DẪN SỬ DỤNG GIT --- https://gist.github.com/antruongnguyen/6bb4ebbcb8ad3608eeddff97ca615c47
 
-Link demo --- 
+Link demo --- demo(https://quannv0702.github.io/BTL_tkw/)
 
 
 # BTL_tkw
