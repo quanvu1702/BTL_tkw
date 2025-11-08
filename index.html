@@ -362,6 +362,47 @@ renderOrders();
 renderReport();
 
 </script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const form = document.querySelector("form");
+  const tableBody = document.querySelector("table tbody");
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault(); // chặn reload trang
+
+    // Lấy dữ liệu từ form
+    const tenSach = form.querySelector('input[placeholder="Tên sách"]').value.trim();
+    const tacGia = form.querySelector('input[placeholder="Tác giả"]').value.trim();
+    const gia = form.querySelector('input[placeholder="Giá"]').value.trim();
+    const soLuong = form.querySelector('input[placeholder="Số lượng"]').value.trim();
+
+    // Kiểm tra dữ liệu
+    if (!tenSach || !tacGia || !gia || !soLuong) {
+      alert("Vui lòng nhập đầy đủ thông tin!");
+      return;
+    }
+
+    // Tạo dòng mới trong bảng
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${tableBody.rows.length + 1}</td>
+      <td>${tenSach}</td>
+      <td>${tacGia}</td>
+      <td>${gia}</td>
+      <td>${soLuong}</td>
+      <td><button class="xoa">Xóa</button></td>
+    `;
+    tableBody.appendChild(row);
+
+    // Reset form
+    form.reset();
+
+    // Gắn sự kiện xóa
+    row.querySelector(".xoa").addEventListener("click", () => row.remove());
+  });
+});
+</script>
 
 </body>
 </html>
+
