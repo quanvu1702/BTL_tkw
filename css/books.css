@@ -1,0 +1,18 @@
+#bookForm input, #bookForm button {
+  padding: 8px;
+  margin: 5px 0;
+}
+#bookTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+#bookTable th, #bookTable td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+#bookTable th {
+  background-color: #04AA6D;
+  color: white;
+}
