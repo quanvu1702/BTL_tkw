@@ -24,7 +24,7 @@ Một ứng dụng web đơn giản giúp người bán sách quản lý danh s�
 
 - HTML5
 - CSS3
-- JavaScript (Vanilla)
+- JavaScript 
 - LocalStorage
 
 ## 📦 Cách sử dụng
