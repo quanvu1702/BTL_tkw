@@ -5,7 +5,7 @@ HƯỚNG DẪN SỬ DỤNG GIT --- [git](https://gist.github.com/antruongnguyen/
 Link demo --- [demo](https://quanvu1702.github.io/BTL_tkw/)
 
 
-# BTL_tkw
+# Bài tập lớn - thiết kế web
 BTL thiết kế web của Nhóm 8 lớp CNTTVA1-K65.
 Link demo: 
 
