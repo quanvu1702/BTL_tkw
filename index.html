@@ -150,10 +150,36 @@ hr {
 </div>
 
 <script>
-window.onload = () => {
-  localStorage.removeItem("books");
-  localStorage.removeItem("orders");
-};
+// Xóa dữ liệu ngay khi tải script (chỉ chạy 1 lần khi load lại trang)
+localStorage.removeItem("books");
+localStorage.removeItem("orders");
+
+// ================== KHỞI TẠO BIẾN TOÀN CỤC ==================
+let books = [];
+let orders = [];
+
+// ================== QUẢN LÝ SÁCH ==================
+function saveBook(event) {
+  event.preventDefault();
+  const title = titleInput.value;
+  const author = authorInput.value;
+  const price = Number(priceInput.value);
+  const quantity = Number(quantityInput.value);
+  const index = editIndex.value;
+
+  if (index) {
+    books[index] = { title, author, price, quantity };
+  } else {
+    books.push({ title, author, price, quantity });
+  }
+
+  localStorage.setItem("books", JSON.stringify(books));
+  document.getElementById("bookForm").reset();
+  editIndex.value = "";
+  renderBooks();
+  renderInventory();
+  renderSelectBooks();
+}
 // ================== QUẢN LÝ SÁCH ==================
 function saveBook(event) {
   event.preventDefault();
@@ -306,4 +332,5 @@ renderReport();
 
 </body>
 </html>
+
 
