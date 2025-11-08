@@ -1,6 +1,6 @@
 Bài tập lớn của nhóm 8 với đề tài: Quản lý bán sách tại hiệu sách
 
-HƯỚNG DẪN SỬ DỤNG GIT --- https://gist.github.com/antruongnguyen/6bb4ebbcb8ad3608eeddff97ca615c47
+HƯỚNG DẪN SỬ DỤNG GIT --- [git](https://gist.github.com/antruongnguyen/6bb4ebbcb8ad3608eeddff97ca615c47)
 
 Link demo --- [demo](https://quanvu1702.github.io/BTL_tkw/)
 
